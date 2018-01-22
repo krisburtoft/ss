@@ -46,7 +46,7 @@ if (isDeveloping) {
 
 }
 
-subscribeToBittrex('BTC-ETH', console.log.bind(console, 'onData'), console.log.bind(console, 'fill'), console.log.bind(console, 'update'));
+subscribeToBittrex('BTC-ETH', console.log.bind(console, 'onUpdate') );
 
 io.on('connection', function(client) {
   console.log('Client connected...');
