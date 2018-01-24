@@ -1,0 +1,18 @@
+@import '../styles/main.less';
+.core-layout__wrapper {
+    display:flex;
+    flex-direction: column;
+    .core-layout__header {
+        background-color: @blue;
+        height: 40px;
+        flex: 0 0 40px;
+    }
+
+    .core-layout__content {
+        flex-grow: 1;
+        padding: 16px 32px;
+    }
+    
+    flex: 1;
+}
+

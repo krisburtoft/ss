@@ -1,14 +1,13 @@
-'use strict';
-
-var path = require('path');
-var webpack = require('webpack');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
   devtool: 'eval-source-map',
   entry: [
     'webpack-hot-middleware/client?reload=true',
-    path.join(__dirname, 'app/main.js')
+    path.join(__dirname, 'client/main.js')
   ],
   output: {
     path: path.join(__dirname, '/dist/'),
@@ -17,7 +16,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'app/index.tpl.html',
+      template: 'client/index.tpl.html',
       inject: 'body',
       filename: 'index.html'
     }),
@@ -26,8 +25,18 @@ module.exports = {
     new webpack.NoErrorsPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('development')
+    }),
+    new ExtractTextPlugin({
+      filename: "[name].[contenthash].css",
+      disable: process.env.NODE_ENV === "development"
     })
   ],
+  resolve: {
+    root: [
+      path.resolve('./client'),
+      path.resolve('./')
+    ]
+  },
   module: {
     loaders: [{
       test: /\.jsx?$/,
@@ -40,8 +49,11 @@ module.exports = {
       test: /\.json?$/,
       loader: 'json'
     }, {
-      test: /\.css$/,
-      loader: 'style!css?modules&localIdentName=[name]---[local]---[hash:base64:5]'
+      test: /\.less$/,
+      loader: "style!css!less",
+      options: {
+        root: path.resolve('./client')
+      }
     }]
   }
 };

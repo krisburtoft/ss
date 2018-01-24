@@ -1,0 +1,6 @@
+{
+    "ASK": "@@io/ask",
+    "BID": "@@io/bid",
+    "JOIN": "@@io/join",
+    "CHUNK": "@@io/chunk"
+}
