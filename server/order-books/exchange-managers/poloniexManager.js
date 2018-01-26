@@ -52,6 +52,7 @@ module.exports = class PoloniexManager extends EventsEmitter {
             if (e.code === 'ECONNRESET') {
                 this.manager.openWebSocket({ version: 2 });
             }
+            logger.error(e);
         });
         this.manager.openWebSocket({ version: 2 });
         this.markets = {};

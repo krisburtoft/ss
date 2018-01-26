@@ -19,7 +19,7 @@ module.exports = async function subscribeToMarkets(market, cb) {
         const bittrexObsersevable = Rx.Observable.fromEvent(bittrexEvents, market).startWith({ asks: [], bids: []});
         const combinedMarketFeed = Rx.Observable.combineLatest(poloniexObservable, bittrexObsersevable).map(concatExchanges);
         logger.debug('combine success!');
-        const subscription = combinedMarketFeed.subscribe(feed => {
+        const subscription = combinedMarketFeed.takeUntil(cancelEvents).throttle(val => Rx.Observable.interval(2000)).subscribe(feed => {
             cb({ type: ORDERBOOKS, payload: feed });
         });
         logger.debug('subscription created');
@@ -29,7 +29,7 @@ module.exports = async function subscribeToMarkets(market, cb) {
                     poloniexEvents.emit('unsubscribe');
                     bittrexEvents.emit('unsubscribe');
                 })
-                .then(() => subscription.unsubscribe());
+                    .then(() => subscription.unsubscribe());
             }
         };
     } catch (err) {

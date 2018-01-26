@@ -3,7 +3,7 @@ import createSocketIoMiddleware from 'redux-socket.io';
 import io from 'socket.io-client';
 import actions from '../../shared/actions.json';
 import { makeRootReducer } from './reducers';
-import { ConnectedRouter, routerReducer, routerMiddleware, push } from 'react-router-redux'
+import { routerMiddleware } from 'react-router-redux'
 import createHistory from 'history/createBrowserHistory'
 
 import reducers from './reducers' // Or wherever you keep your reducers
@@ -27,10 +27,6 @@ export default (initialState = {}) => {
     // ======================================================
     const middleware = [thunk, socketIoMiddleware, router];
 
-    // ======================================================
-    // Store Enhancers
-    // ======================================================
-    const enhancers = [];
 
     let composeEnhancers = compose;
 
@@ -44,14 +40,11 @@ export default (initialState = {}) => {
     // ======================================================
     // Store Instantiation and HMR Setup
     // ======================================================
-    const store = createStore(
+    return createStore(
       makeRootReducer(),
       initialState,
       composeEnhancers(
-        applyMiddleware(...middleware),
-        ...enhancers
+        applyMiddleware(...middleware)
       )
     );
-
-    return store;
 };

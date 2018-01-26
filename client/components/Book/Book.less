@@ -4,7 +4,7 @@
     display: flex;
     flex-direction: column;
     .book__title {
-        color: darken(@secondary, 15%);
+        color: darken(@tertiary, 15%);
     }
     .book__header.book__row {
         height: @rowHeight;
@@ -19,17 +19,20 @@
     .book__row {
         padding: 8px;
         height: @rowHeight;
+        line-height: @rowHeight;
         display: flex;
         color: darken(@secondary, 15%);
         
         &-rate{
-            flex: 0 1 40%;
+            flex: 0 1 30%;
         }
         &-quantity{
-            flex: 0 1 40%;
+            flex: 0 1 30%;
         }
         &-exchanges {
-            flex: 1;
+            flex: 1 0 20%;
+            text-transform: capitalize;
+            
         }
         &:hover {
             background-color: fadeout(@primary, 89%);
@@ -44,7 +47,29 @@
             background-color: fadeout(@tertiary, 90%);
             &:hover {
                 background-color: fadeout(@tertiary, 80%);
-            } 
+            }
+            .book__row-multiple-exchanges {
+                span {
+                    display:block;
+                }
+            }
+        }
+        .book__row-multiple-exchanges {
+            flex: 0 0 40px;
+            min-width: 40px;
+            position: relative;
+            span {
+                display: none;
+                position: absolute;
+                width: 20px;
+                height: 10px;
+                border: 1px solid @tertiary;
+                border-top:none;
+                border-right: none;
+                transform: rotate(-45deg);
+                top: 4px;
+            }
+            
         }
     }
     .book__rows {

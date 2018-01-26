@@ -26,7 +26,9 @@ class BookComponent extends Component {
                         Quantity
                     </div>
                     <div className='book__row-exchanges'>
-                        Exchange
+                        Exchanges
+                    </div>
+                    <div classNam='book__row-multiple-exchanges'>
                     </div>
                 </div>
                 <div className='book__rows'>
@@ -34,7 +36,7 @@ class BookComponent extends Component {
                             <div 
                                 className={`book__row book__row--${
                                     index % 2 === 0 ? 'even' : 'odd'
-                                    } ${row.exchange === 'both' ? 'book__row--overlapping' : ''}`} 
+                                    } ${row.exchange.length > 1 ? 'book__row--overlapping' : ''}`} 
                                 key={row.rate}>
                                 <div className='book__row-rate'>
                                     {row.rate}
@@ -43,7 +45,10 @@ class BookComponent extends Component {
                                     {row.quantity}
                                 </div>
                                 <div className='book__row-exchanges'>
-                                    {row.exchange}
+                                    {row.exchange.join(', ')}
+                                </div>
+                                <div className='book__row-multiple-exchanges'>
+                                    <span />
                                 </div>
                             </div>
                         )
