@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "coding exercise",
   "main": "index.js",
-  "engines" : { "node" : ">=9.4.0" },
+  "engines" : { "node" : "9.4.0" },
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha tests/**/*.js",
     "start": "node index",
