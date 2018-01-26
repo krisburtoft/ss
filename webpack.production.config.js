@@ -1,10 +1,11 @@
-'use strict';
-
-var path = require('path');
-var webpack = require('webpack');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var StatsPlugin = require('stats-webpack-plugin');
+const path = require('path');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const StatsPlugin = require('stats-webpack-plugin');
+const extractLess = new ExtractTextPlugin({
+  filename: "[name].[contenthash].css"
+});
 
 module.exports = {
   entry: [
@@ -34,32 +35,41 @@ module.exports = {
       modules: false
     }),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
-    })
+      'process.env.NODE_ENV': 'production'
+    }),
+    extractLess
   ],
   resolve: {
-    root: [
-      path.resolve('./client'),
-      path.resolve('./')
+    modules: [
+      path.join(__dirname, 'client'),
+      path.resolve(__dirname),
+      'node_modules'
     ]
   },
   module: {
-    loaders: [{
-      test: /\.jsx?$/,
-      exclude: /node_modules/,
-      loader: 'babel',
-      query: {
-        "presets": ["es2015", "stage-0", "react"]
-      }
-    }, {
+    rules: [{
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ['env','react']
+          }
+        }
+      }, {
       test: /\.json?$/,
-      loader: 'json'
+      use: [
+        'json-loader'
+      ]
     }, {
-      test: /\.css$/,
-      loader: ExtractTextPlugin.extract('style', 'css?modules&localIdentName=[name]---[local]---[hash:base64:5]!postcss')
+      test: /\.less$/,
+      use: extractLess.extract({
+        use: [{
+          loader: "css-loader"
+        }, {
+          loader: "less-loader"
+        }]
+      })
     }]
-  },
-  postcss: [
-    require('autoprefixer')
-  ]
+  }
 };

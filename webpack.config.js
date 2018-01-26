@@ -2,7 +2,10 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
-
+const extractLess = new ExtractTextPlugin({
+  filename: "[name].[contenthash].css",
+  disable: process.env.NODE_ENV === "development"
+});
 module.exports = {
   devtool: 'eval-source-map',
   entry: [
@@ -26,34 +29,39 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('development')
     }),
-    new ExtractTextPlugin({
-      filename: "[name].[contenthash].css",
-      disable: process.env.NODE_ENV === "development"
-    })
+    extractLess
   ],
   resolve: {
-    root: [
-      path.resolve('./client'),
-      path.resolve('./')
+    modules: [
+      path.join(__dirname, 'client'),
+      path.resolve(__dirname),
+      'node_modules'
     ]
   },
   module: {
-    loaders: [{
-      test: /\.jsx?$/,
+    rules: [{
+      test: /\.js$/,
       exclude: /node_modules/,
-      loader: 'babel',
-      query: {
-        "presets": ["react", "es2015", "stage-0", "react-hmre"]
+      use: {
+        loader: "babel-loader",
+        options: {
+          presets: ['env', 'react']
+        }
       }
     }, {
       test: /\.json?$/,
-      loader: 'json'
+      use: [
+        'json-loader'
+      ]
     }, {
       test: /\.less$/,
-      loader: "style!css!less",
-      options: {
-        root: path.resolve('./client')
-      }
+      use: extractLess.extract({
+        use: [{
+          loader: "css-loader"
+        }, {
+          loader: "less-loader"
+        }]
+      })
     }]
   }
 };

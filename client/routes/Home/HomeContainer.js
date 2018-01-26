@@ -1,5 +1,9 @@
+import Home from './HomeComponent';
 import { connect } from 'react-redux';
-import HomeComponent from './HomeComponent';
-import { getOrderBookState } from 'store/reducers/orderBookReducer';
+import { loadMarkets, getHomeState } from '../../store/reducers/homeReducer';
 
-export default connect(getOrderBookState)(HomeComponent);
+const mapActionCreators = {
+    loadMarkets
+}
+
+export default connect(getHomeState, mapActionCreators)(Home);

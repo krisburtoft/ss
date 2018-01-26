@@ -2,5 +2,10 @@
     "ASK": "@@io/ask",
     "BID": "@@io/bid",
     "JOIN": "@@io/join",
-    "CHUNK": "@@io/chunk"
+    "UNSUBSCRIBE": "@@io/unsubscribe",
+    "ORDERBOOKS": "@@io/order-books",
+    "LOAD_MARKETS": "@@io/load-markets",
+    "RECEIVE_MARKETS": "@@io/receive-markets",
+    "GET_MARKET_INFO": "@@io/get-market-info",
+    "RECEIVE_MARKET_INFO": "@@io/receive-market-info"
 }

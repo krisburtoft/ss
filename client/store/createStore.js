@@ -53,7 +53,5 @@ export default (initialState = {}) => {
       )
     );
 
-    store.dispatch({ type: actions.JOIN, data: 'BTC-ETH' })
-
     return store;
 };

@@ -1,0 +1,120 @@
+@import '../../styles/main.less';
+@rowHeight: 32px;
+.book__wrapper {
+    display: flex;
+    flex-direction: column;
+    .book__header {
+        height: @rowHeight;
+        background-color: @secondary;
+        flex-basis: 1;
+        font-size: 1.245em;
+        &.book__row:hover {
+            background-color: @secondary;
+        }
+    }
+    .book__row {
+        padding: 8px;
+        height: @rowHeight;
+        display: flex;
+        &-rate{
+            flex: 0 1 40%;
+        }
+        &-quantity{
+            flex: 0 1 40%;
+        }
+        &-exchanges {
+            flex: 1;
+        }
+        &:hover {
+            background-color: fadeout(@primary, 89%);
+        }
+        &.book__row--even {
+            background-color: fadeout(@secondary,90%);
+            &:hover {
+                background-color: fadeout(@secondary, 80%);
+            } 
+        }
+        &.book__row--overlapping {
+            background-color: fadeout(@tertiary, 90%);
+            &:hover {
+                background-color: fadeout(@tertiary, 80%);
+            } 
+        }
+    }
+    .book__rows {
+        min-height: 480px;
+        background-color: fadeout(@primary, 90%);
+    }
+
+    .book__nav .pagination{
+        padding-left: 0;
+        list-style-type: none;
+        display: flex;
+        @navColor: @tertiary;
+        .btn-next-page,
+        .btn-prev-page,
+        .btn-last-page,
+        .btn-first-page,
+        .btn-numbered-page{
+            height: @rowHeight;
+            width: @rowHeight;
+            border: 1px solid @navColor;
+            border-radius: @rowHeight / 2;
+            margin: 8px;
+            //backgroun-color: 
+            &:hover,
+            &.active {
+                background-color: @navColor;
+                color: contrast(@navColor);
+            }
+            a {
+                height: 100%;
+                width: 100%;
+                cursor: pointer;
+                display: block;
+                text-align: center;
+                line-height: 30px;
+            }
+            
+            &.disabled {
+                border-color: @disabled;
+                color: @disabled;
+                opacity: .6;
+                pointer-events: none;
+            }
+        }
+
+        .btn-next-page,
+        .btn-prev-page {
+            position: relative;
+            a:after {
+                border-color: @navColor;
+                pointer-events: none;
+                @size: 10px;
+                position: absolute;
+                top: @size;
+                left: 8px;
+                display: block;
+                content: ' ';
+                width: @size;
+                height: @size;
+                transform: rotate(45deg);
+                border-top: 1px solid;
+                border-right: 1px solid;
+            }
+        }
+        .btn-prev-page {
+            a:after {
+                border: 1px solid @secondary;
+                border-top: none;
+                border-right: none;
+                left: 12px;
+            }
+        }
+        .btn-next-more,
+        .btn-prev-more {
+            display: none;
+        }
+        
+    }
+}

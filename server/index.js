@@ -4,7 +4,8 @@ const webpack = require('webpack');
 const webpackMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 const config = require('../webpack.config.js');
-const subscribeToMarkets = require('./order-books');
+const setUpSocket = require('./order-books');
+
 const isDeveloping = process.env.NODE_ENV !== 'production';
 const port = isDeveloping ? 3000 : process.env.PORT;
 const app = express();
@@ -12,7 +13,6 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const logger = require('./util/logger')('server');
 const dirName = path.dirname(require.main.filename);
-const actions = require('../shared/actions.json');
 
 if (isDeveloping) {
     const compiler = webpack(config);
@@ -49,17 +49,8 @@ app.use((err, req, res, next) => {
     res.status(500).send(publicError);
 });
 
-io.on('connection', function(client) {
-    client.on('action', async function(action) {
-        switch(action.type) {
-        case actions.JOIN: {
-            const subscription = await subscribeToMarkets(action.data, event => client.emit('action', event));
-            client.on('disconnect', () => subscription.unsubscribe());
-            break;
-        }
-        }
-    });
-});
+setUpSocket(io);
+
 
 server.listen(port, '0.0.0.0', function onStart(err) {
     if (err) {

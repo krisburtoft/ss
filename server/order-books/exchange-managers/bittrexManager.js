@@ -1,36 +1,69 @@
-const MarketManager = require('bittrex-market');
 const Promise = require('bluebird');
 const EventsEmitter = require('events');
-const logger  = require.main.require('./server/util/logger')('bittrex-manager');
-
+const logger = require.main.require('./server/util/logger')('bittrex-manager');
+const BittrexClient = require('bittrex-orderbook-manager');
 module.exports = class BittrexManager extends EventsEmitter {
     constructor() {
         super();
+        logger.info('connecting');
         this.markets = {};
-        this.manager = new MarketManager(false);
-        this.loadMarket = Promise.promisify(this.manager.market.bind(this.manager));
+        this.ready = false;
+        this.manager = new BittrexClient();
+        this.manager.connect().then(client => {
+            logger.info('connected');
+            this.ready = true;
+        });
+
+    }
+
+    static parseGroup(group) {
+        return Object.values(group).map(info => ({ exchange: 'bittrex', ...info }));
     }
 
     async subscribeToPair(market, count = 0) {
         try {
+            if (!this.ready) {
+                return Promise.delay(250).then(() => this.subscribeToPair(market, count));
+            }
             let currentPair = this.markets[market];
             if (!currentPair) {
-                const currentMarket = await this.loadMarket(market).catch(e => logger.error(e));
+                const orderBook = this.manager.orderBook(market);
+                orderBook.on('update', () => {
+                    const { asks, bids } = orderBook.orders;
+                    const volumes = {
+                        asks: BittrexManager.parseGroup(asks),
+                        bids: BittrexManager.parseGroup(bids)
+                    };
+                    this.emit(market, volumes);
+                });
+                orderBook.on('error', (err) => {
+                    if (err === 'No Hub') {
+                        logger.info('signalR connection error', err);
+                        return Promise.delay(250).then(() => orderBook.start());
+                    }
+                    logger.error(err);
+                });
+
+                orderBook.on('started', () => {
+                    logger.info('order book started', market);
+                });
+
                 currentPair = {
                     market,
-                    count
+                    count,
+                    orderBook
                 };
-                
-                currentMarket.on('orderbook.diff.asks.inserted', event => this.emit(market, { type: 'ask', market: 'bittrix', ...event}));
-                currentMarket.on('orderbook.diff.bids.inserted', event => this.emit(market, { type: 'bid', market: 'bittrix', ...event}));
+
                 this.markets[market] = currentPair;
             }
+            const { orderBook } = currentPair;
+            orderBook.start();
             if (!count) {
                 currentPair.count++;
             }
         } catch (err) {
-            console.error(err);
-            return await Promise.delay(100).then(() => this.subscribeToPair(market, count));
+            logger.error(err);
+            return await Promise.delay(250).then(() => this.subscribeToPair(market, count));
         }
     }
 
@@ -41,15 +74,7 @@ module.exports = class BittrexManager extends EventsEmitter {
         if (currentPair.count <= 0) {
             logger.debug('unsubscribed from pair', market);
             delete this.markets[market];
-            
-            // unsubscribe from all markets;
-            return Promise.try(() => this.manager.reset()).then(() => {
-                //re-wire all subscriptions;
-                return Promise.all(Object.values(this.markets).map(({ market, count }) => {
-                    delete this.markets[market];
-                    return this.subscribeToPair(market, count);
-                }));
-            }).catch(e => logger.error(e));
+            delete this.manager.orderBooks[market];
         }
     }
 };

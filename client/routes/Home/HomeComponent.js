@@ -1,14 +1,26 @@
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import MarketCard from '../../components/MarketCard';
 
-
-    import React, { Component } from 'react';
-    import './Home.less';
-    
-    export default class HomeRoute extends Component {
-        render() {
-            return (
-                <div className='home-route'>
-                  {JSON.stringify(this.props)}
-                </div>
-            );
+class HomeRoute extends Component {
+    componentWillMount() {
+        if (!this.props.markets.length) {
+            this.props.loadMarkets();
         }
     }
+    render() {
+        return (
+            <div>
+                {this.props.markets.map(m => <MarketCard key={m.id} {...m} />)}
+            </div>
+        );
+    }
+}
+
+HomeRoute.propTypes = {
+    markets: PropTypes.arrayOf(PropTypes.shape({
+        
+    })),
+};
+
+export default HomeRoute;

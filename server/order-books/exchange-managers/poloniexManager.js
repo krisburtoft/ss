@@ -1,31 +1,79 @@
 const EventsEmitter = require('events');
-const PoloniexApiPush = require('poloniex-api-push');
 const logger  = require.main.require('./server/util/logger')('poloniex-manager');
 const Promise = require('bluebird');
+const Poloniex = require('poloniex-api-node');
 
-class PoloniexManager extends EventsEmitter {
+module.exports = class PoloniexManager extends EventsEmitter {
     constructor() {
         super();
-        this.manager =  new PoloniexApiPush();
+        this.manager =  new Poloniex();
         logger.info('Initializing PoloniexManager');
-        this.manager.init().then(_ => {
+        this.manager.on('open', ()=> {
             this.ready = true;
             logger.info('Poloniex connection ready');
-        }).catch(e => logger.error('error initializing poloniex-api-push', e));
+        });
+        this.manager.on('message', (channelName, dataSet, seq) => {
+            if (!this.markets[channelName]) {
+                return;
+            }
+            logger.trace('receive message', channelName, dataSet, seq);
+            const message = dataSet[0];
+            switch(message.type) {
+            case 'orderBook': {
+                this.markets[channelName].data = message.data;
+                break;
+            }
+            case 'orderBookModify': {
+                switch (message.data.type) {
+                case 'bid':
+                case 'ask':
+                    this.markets[channelName].data[`${message.data.type}s`][message.data.rate] = message.data.amount;
+                    break;
+                default:
+                    logger.trace('unknown modify type', message.data.type);
+                    break;
+                }
+                break;
+            }
+            case 'orderBookRemove': {
+                delete this.markets[channelName].data[`${message.data.type}s`][message.data.rate];
+                break;
+            }
+            }
+            const { asks, bids } =  this.markets[channelName].data;
+            const normalizedFeed = {
+                asks: PoloniexManager.parseGroup(asks),
+                bids: PoloniexManager.parseGroup(bids)
+            };
+            this.emit(PoloniexManager.parseMarket(channelName), normalizedFeed);
+        });
+
+        this.manager.on('error', e => {
+            if (e.code === 'ECONNRESET') {
+                this.manager.openWebSocket({ version: 2 });
+            }
+        });
+        this.manager.openWebSocket({ version: 2 });
         this.markets = {};
+    }
+
+    static parseGroup(group) {
+        return Object.keys(group).map(rate => ({ exchange: 'poloniex', rate: parseFloat(rate), quantity: parseFloat(group[rate]) }));
     }
 
     static normalizeMarket(market) {
         return market.replace(/-/, '_');
     }
 
-    subscribeToPair(market) {
+    static parseMarket(pair) {
+        return pair.replace(/_/, '-');
+    }
+
+    async subscribeToPair(market) {
         const pair = PoloniexManager.normalizeMarket(market);
         let currentPair = this.markets[pair];
         if (!currentPair) {
             this.manager.subscribe(pair);
-            this.manager.on(`${pair}-orderbook-bids`, bid =>  this.emit(market, { type: 'bid', market: 'poloniex', ...bid }));
-            this.manager.on(`${pair}-orderbook-asks`, ask =>  this.emit(market, { type: 'ask', market: 'poloniex', ...ask }));
             currentPair = {
                 count: 0
             };
@@ -43,21 +91,10 @@ class PoloniexManager extends EventsEmitter {
             const currentPair = this.markets[pair];
             currentPair.count--;
             if (currentPair.count <= 0) {
-                this.manager.unSubscribe(pair);
+                this.manager.unsubscribe(pair);
                 logger.debug('unsubscribed from pair', pair);
                 delete this.markets[pair];
             }
         });
     }
-}
-
-const manager = new PoloniexManager();
-
-module.exports = async function getManager() {
-    return await Promise.try(() => {
-        if (manager.ready) {
-            return manager;
-        }
-        return Promise.delay(100);
-    });
 };

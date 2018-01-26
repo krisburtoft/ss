@@ -1,0 +1,239 @@
+body,
+html {
+  min-height: 100%;
+  display: flex;
+  margin: 0px;
+  min-width: 100%;
+  font-family: 'Ubuntu', sans-serif;
+}
+#root {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+}
+.book__wrapper {
+  display: flex;
+  flex-direction: column;
+}
+.book__wrapper .book__header {
+  height: 32px;
+  background-color: #66a44c;
+  flex-basis: 1;
+  font-size: 1.245em;
+}
+.book__wrapper .book__header.book__row:hover {
+  background-color: #66a44c;
+}
+.book__wrapper .book__row {
+  padding: 8px;
+  height: 32px;
+  display: flex;
+}
+.book__wrapper .book__row-rate {
+  flex: 0 1 40%;
+}
+.book__wrapper .book__row-quantity {
+  flex: 0 1 40%;
+}
+.book__wrapper .book__row-exchanges {
+  flex: 1;
+}
+.book__wrapper .book__row:hover {
+  background-color: rgba(76, 102, 164, 0.11);
+}
+.book__wrapper .book__row.book__row--even {
+  background-color: rgba(102, 164, 76, 0.1);
+}
+.book__wrapper .book__row.book__row--even:hover {
+  background-color: rgba(102, 164, 76, 0.2);
+}
+.book__wrapper .book__row.book__row--overlapping {
+  background-color: rgba(164, 76, 102, 0.1);
+}
+.book__wrapper .book__row.book__row--overlapping:hover {
+  background-color: rgba(164, 76, 102, 0.2);
+}
+.book__wrapper .book__rows {
+  min-height: 480px;
+  background-color: rgba(76, 102, 164, 0.1);
+}
+.book__wrapper .book__nav .pagination {
+  padding-left: 0;
+  list-style-type: none;
+  display: flex;
+}
+.book__wrapper .book__nav .pagination .btn-next-page,
+.book__wrapper .book__nav .pagination .btn-prev-page,
+.book__wrapper .book__nav .pagination .btn-last-page,
+.book__wrapper .book__nav .pagination .btn-first-page,
+.book__wrapper .book__nav .pagination .btn-numbered-page {
+  height: 32px;
+  width: 32px;
+  border: 1px solid #a44c66;
+  border-radius: 16px;
+  margin: 8px;
+}
+.book__wrapper .book__nav .pagination .btn-next-page:hover,
+.book__wrapper .book__nav .pagination .btn-prev-page:hover,
+.book__wrapper .book__nav .pagination .btn-last-page:hover,
+.book__wrapper .book__nav .pagination .btn-first-page:hover,
+.book__wrapper .book__nav .pagination .btn-numbered-page:hover,
+.book__wrapper .book__nav .pagination .btn-next-page.active,
+.book__wrapper .book__nav .pagination .btn-prev-page.active,
+.book__wrapper .book__nav .pagination .btn-last-page.active,
+.book__wrapper .book__nav .pagination .btn-first-page.active,
+.book__wrapper .book__nav .pagination .btn-numbered-page.active {
+  background-color: #a44c66;
+  color: #ffffff;
+}
+.book__wrapper .book__nav .pagination .btn-next-page a,
+.book__wrapper .book__nav .pagination .btn-prev-page a,
+.book__wrapper .book__nav .pagination .btn-last-page a,
+.book__wrapper .book__nav .pagination .btn-first-page a,
+.book__wrapper .book__nav .pagination .btn-numbered-page a {
+  height: 100%;
+  width: 100%;
+  cursor: pointer;
+  display: block;
+  text-align: center;
+  line-height: 30px;
+}
+.book__wrapper .book__nav .pagination .btn-next-page.disabled,
+.book__wrapper .book__nav .pagination .btn-prev-page.disabled,
+.book__wrapper .book__nav .pagination .btn-last-page.disabled,
+.book__wrapper .book__nav .pagination .btn-first-page.disabled,
+.book__wrapper .book__nav .pagination .btn-numbered-page.disabled {
+  border-color: grayscale(#4c66a4);
+  color: grayscale(#4c66a4);
+  opacity: .6;
+  pointer-events: none;
+}
+.book__wrapper .book__nav .pagination .btn-next-page,
+.book__wrapper .book__nav .pagination .btn-prev-page {
+  position: relative;
+}
+.book__wrapper .book__nav .pagination .btn-next-page a:after,
+.book__wrapper .book__nav .pagination .btn-prev-page a:after {
+  border-color: #a44c66;
+  pointer-events: none;
+  position: absolute;
+  top: 10px;
+  left: 8px;
+  display: block;
+  content: ' ';
+  width: 10px;
+  height: 10px;
+  transform: rotate(45deg);
+  border-top: 1px solid;
+  border-right: 1px solid;
+}
+.book__wrapper .book__nav .pagination .btn-prev-page a:after {
+  border: 1px solid #66a44c;
+  border-top: none;
+  border-right: none;
+  left: 12px;
+}
+.book__wrapper .book__nav .pagination .btn-next-more,
+.book__wrapper .book__nav .pagination .btn-prev-more {
+  display: none;
+}
+body,
+html {
+  min-height: 100%;
+  display: flex;
+  margin: 0px;
+  min-width: 100%;
+  font-family: 'Ubuntu', sans-serif;
+}
+#root {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+}
+.market-card {
+  height: 80px;
+  width: 200px;
+  text-decoration: none;
+  color: #4c66a4;
+  display: inline-flex;
+  margin: 16px;
+  flex-wrap: wrap;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+  padding: 8px 16px;
+  background-color: rgba(76, 102, 164, 0.05);
+}
+.market-card h2 {
+  font-size: 18px;
+  flex: 0 1 166px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.market-card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+.market-card .market-card__logo {
+  height: 32px;
+  width: 32px;
+}
+.market-card .market-card__base-currency {
+  flex: 0 0 200px;
+}
+body,
+html {
+  min-height: 100%;
+  display: flex;
+  margin: 0px;
+  min-width: 100%;
+  font-family: 'Ubuntu', sans-serif;
+}
+#root {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+}
+.home-route {
+  display: flex;
+  flex-wrap: wrap;
+}
+.home-route .home-route__market-summary {
+  flex: 1 0 100%;
+  padding: 0 16px;
+  display: flex;
+}
+.home-route .home-route__market-summary h1 {
+  flex: 1 0;
+  display: inline;
+}
+.home-route .home-route__book {
+  flex: 1 0 400px;
+  padding: 16px;
+}
+body,
+html {
+  min-height: 100%;
+  display: flex;
+  margin: 0px;
+  min-width: 100%;
+  font-family: 'Ubuntu', sans-serif;
+}
+#root {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+}
+.core-layout__wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.core-layout__wrapper .core-layout__header {
+  background-color: #4c66a4;
+  height: 40px;
+  flex: 0 0 40px;
+}
+.core-layout__wrapper .core-layout__content {
+  flex-grow: 1;
+  padding: 16px 32px;
+}

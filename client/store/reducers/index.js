@@ -11,6 +11,5 @@ export const makeRootReducer = (asyncReducers) => {
         reducers[required.name] = required.default;
         return reducers;
     }, {});
-    console.log('reducers', reducers)
     return combineReducers(reducers);
 };
