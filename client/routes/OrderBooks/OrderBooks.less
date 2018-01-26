@@ -1,21 +1,27 @@
 @import '../../styles/main.less';
-
+@padding: 16px;
 .home-route {
     display: flex;
     flex-wrap: wrap;
     .home-route__market-summary {
         flex: 1 0 100%;
-        padding: 0 16px;
+        padding: 0 @padding;
         display: flex;
-        h1 {
+        padding-right: @padding;
+        .home-route__market-summary-title {
             flex: 1 0;
             display: inline;
+            color: @primary;
         }
-        
+        .market-card {
+            margin-right: 2 * @padding;
+        }
     }
     .home-route__book {
         flex: 1 0 400px;
-        padding: 16px;
-
+        padding: @padding;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        background-color: fadeout(@primary, 99%);
+        margin: @padding;
     }
 }

@@ -27,32 +27,24 @@ export default class OrderBooksRoute extends Component {
         return (
             <div className='home-route'>
                 <div className='home-route__market-summary'>
-                    {/* <h1>{marketSummary.name}</h1>
-                    <span className='home-route__market-summary-base-currency'>
-                        Base Currency: {marketSummary.baseCurrency}
-                    </span>
-                    {
-                        marketSummary.logoUrl &&
-                        <img src={marketSummary.logoUrl} alt={marketSummary.name} />
-                    } */}
-                    <h1>{marketSummary.name}</h1>
+                    <h1 className='home-route__market-summary-title'>{marketSummary.name}</h1>
                     <MarketCard {...marketSummary} />
                 </div>
                 <div className='home-route__book'>
-                    <h1>Asks</h1>
                     <Book
                         changePage={changePage}
                         pageIndex={asksPageIndex}
                         rows={asks}
+                        title='Asks'
                         totalPages={asksTotalPages}
                         listType='asks' />
                 </div>
                 <div className='home-route__book'>
-                    <h1>Bids</h1>
                     <Book
                         changePage={changePage}
                         pageIndex={bidsPageIndex}
                         rows={bids}
+                        title='Bids'
                         totalPages={bidsTotalPages}
                         listType='bids' />
                 </div>

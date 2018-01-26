@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Route } from 'react-router-dom'
+import { BrowserRouter, Route, Link } from 'react-router-dom'
 import { OrderBooks, Home } from 'routes';
 import { Provider } from 'react-redux';
 import createHistory from 'history/createBrowserHistory';
@@ -13,6 +13,7 @@ export default class AppComponent extends React.Component {
             <BrowserRouter>
                 <div className='core-layout__wrapper'>
                     <div className='core-layout__header'>
+                      <Link to='/' className='core-layout__header-home-link'>Markets</Link>
                     </div>
                     <div className='core-layout__content'>
                         <Route path="/" exact component={Home} />

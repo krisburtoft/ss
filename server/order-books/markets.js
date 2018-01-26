@@ -2,12 +2,12 @@ const axios = require('axios');
 const logger = require('../util/logger')('markets');
 const BITTREX_MARKETS_URL = 'https://bittrex.com/api/v1.1/public/getmarkets';
 const POLONIEX_MARKETS_URL = 'https://poloniex.com/public?command=returnTicker';
+
 const Promise = require('bluebird');
 exports.loadAvailableMarkets = async function loadAvailableMarkets() {
     return Promise.all([
         axios.get(BITTREX_MARKETS_URL),
         axios.get(POLONIEX_MARKETS_URL)])
-        .timeout(2000)
         .spread((bittrex, poloniex) => {
             return bittrex.data.result.filter(i => 
                 i.IsActive && poloniex.data[i.MarketName.replace(/-/, '_')])

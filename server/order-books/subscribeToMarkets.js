@@ -1,6 +1,6 @@
 const bittrex = require('./bittrex');
 const poloniex = require('./poloniex');
-const logger = require('../util/logger')('order-books');
+const logger = require('../util/logger')('subScribeToMarkets');
 const Rx = require('rxjs');
 const { ORDERBOOKS } = require.main.require('./shared/actions.json');
 const Promise = require('bluebird');
@@ -18,18 +18,18 @@ module.exports = async function subscribeToMarkets(market, cb) {
         const poloniexObservable =  Rx.Observable.fromEvent(poloniexEvents, market);
         const bittrexObsersevable = Rx.Observable.fromEvent(bittrexEvents, market).startWith({ asks: [], bids: []});
         const combinedMarketFeed = Rx.Observable.combineLatest(poloniexObservable, bittrexObsersevable).map(concatExchanges);
-
-        const subscription = combinedMarketFeed.takeUntil(cancelEvents).throttle(val => Rx.Observable.interval(5000)).subscribe(feed => {
+        logger.debug('combine success!');
+        const subscription = combinedMarketFeed.subscribe(feed => {
             cb({ type: ORDERBOOKS, payload: feed });
         });
+        logger.debug('subscription created');
         return {
             unsubscribe: async () => {
                 return await Promise.try(() => {
                     poloniexEvents.emit('unsubscribe');
                     bittrexEvents.emit('unsubscribe');
-                }
-                )
-                    .then(() => subscription.unsubscribe());
+                })
+                .then(() => subscription.unsubscribe());
             }
         };
     } catch (err) {

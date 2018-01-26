@@ -14,9 +14,10 @@ class BookComponent extends Component {
     }
 
     render() {
-        const { rows, pageIndex, totalPages } = this.props;
+        const { rows, pageIndex, totalPages, title } = this.props;
         return (
             <div className='book__wrapper'>
+                <h2 className='book__title'>{title}</h2>
                 <div className='book__header book__row'>
                     <div className='book__row-rate'>
                         Rate

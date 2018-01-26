@@ -17,7 +17,7 @@ module.exports = class BittrexManager extends EventsEmitter {
     }
 
     static parseGroup(group) {
-        return Object.values(group).map(info => ({ exchange: 'bittrex', ...info }));
+        return Object.values(group).map(info => ({ exchange: ['bittrex'], rate: info.rate.toFixed(8), quantity: info.quantity }));
     }
 
     async subscribeToPair(market, count = 0) {
@@ -38,8 +38,9 @@ module.exports = class BittrexManager extends EventsEmitter {
                 });
                 orderBook.on('error', (err) => {
                     if (err === 'No Hub') {
-                        logger.info('signalR connection error', err);
-                        return Promise.delay(250).then(() => orderBook.start());
+                        logger.error('signalR connection error', err);
+                        logger.info('retrying');
+                        return Promise.delay(250).then(() => this.subscribeToPair(market, count));
                     }
                     logger.error(err);
                 });
@@ -58,9 +59,7 @@ module.exports = class BittrexManager extends EventsEmitter {
             }
             const { orderBook } = currentPair;
             orderBook.start();
-            if (!count) {
-                currentPair.count++;
-            }
+            currentPair.count++;
         } catch (err) {
             logger.error(err);
             return await Promise.delay(250).then(() => this.subscribeToPair(market, count));

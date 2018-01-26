@@ -3,7 +3,10 @@
 .book__wrapper {
     display: flex;
     flex-direction: column;
-    .book__header {
+    .book__title {
+        color: darken(@secondary, 15%);
+    }
+    .book__header.book__row {
         height: @rowHeight;
         background-color: @secondary;
         flex-basis: 1;
@@ -11,11 +14,14 @@
         &.book__row:hover {
             background-color: @secondary;
         }
+        color: contrast(@secondary);
     }
     .book__row {
         padding: 8px;
         height: @rowHeight;
         display: flex;
+        color: darken(@secondary, 15%);
+        
         &-rate{
             flex: 0 1 40%;
         }
@@ -61,7 +67,8 @@
             border: 1px solid @navColor;
             border-radius: @rowHeight / 2;
             margin: 8px;
-            //backgroun-color: 
+            transition: all .1s;
+            color: @navColor;
             &:hover,
             &.active {
                 background-color: @navColor;
@@ -88,7 +95,6 @@
         .btn-prev-page {
             position: relative;
             a:after {
-                border-color: @navColor;
                 pointer-events: none;
                 @size: 10px;
                 position: absolute;
@@ -99,13 +105,17 @@
                 width: @size;
                 height: @size;
                 transform: rotate(45deg);
-                border-top: 1px solid;
-                border-right: 1px solid;
+                border-top: 2px solid @navColor;
+                border-right: 2px solid @navColor;
+                transition: all .1s;
+            }
+            &:hover a:after{
+                border-color: contrast(@navColor);
             }
         }
         .btn-prev-page {
             a:after {
-                border: 1px solid @secondary;
+                border: 2px solid @navColor;
                 border-top: none;
                 border-right: none;
                 left: 12px;

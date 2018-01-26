@@ -58,7 +58,7 @@ module.exports = class PoloniexManager extends EventsEmitter {
     }
 
     static parseGroup(group) {
-        return Object.keys(group).map(rate => ({ exchange: 'poloniex', rate: parseFloat(rate), quantity: parseFloat(group[rate]) }));
+        return Object.keys(group).map(rate => ({ exchange: ['poloniex'], rate , quantity: parseFloat(group[rate]) }));
     }
 
     static normalizeMarket(market) {

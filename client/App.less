@@ -3,9 +3,17 @@
     display:flex;
     flex-direction: column;
     .core-layout__header {
+        @headerHeight: 48px;
         background-color: @primary;
-        height: 40px;
-        flex: 0 0 40px;
+        height: @headerHeight;
+        flex: 0 0 @headerHeight;
+        .core-layout__header-home-link {
+            color: contrast(@primary);
+            text-decoration: none;
+            font-size: 18px;
+            line-height: @headerHeight;
+            margin-left: 48px;
+        }
     }
 
     .core-layout__content {

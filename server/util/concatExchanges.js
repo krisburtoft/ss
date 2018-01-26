@@ -7,7 +7,7 @@ const concatList = module.exports.concatList = function concatList(a, b, reverse
             map[line.rate] = {
                 rate: line.rate,
                 quantity,
-                exchange: 'both'
+                exchange: [...map[line.rate].exchange, ...line.exchange]
             };
         } else {
             map[line.rate] = line;

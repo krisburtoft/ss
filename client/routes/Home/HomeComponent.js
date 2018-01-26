@@ -18,9 +18,7 @@ class HomeRoute extends Component {
 }
 
 HomeRoute.propTypes = {
-    markets: PropTypes.arrayOf(PropTypes.shape({
-        
-    })),
+    markets: PropTypes.arrayOf(MarketCard.propTypes),
 };
 
 export default HomeRoute;
