@@ -78,10 +78,9 @@ module.exports = class PoloniexManager extends EventsEmitter {
             currentPair = {
                 count: 0
             };
-            this.markets[pair] = currentPair;
         }
-
         currentPair.count++;
+        this.markets[pair] = currentPair;
     }
 
     async unsubscribe(market) {

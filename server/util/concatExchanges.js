@@ -1,13 +1,16 @@
-const concatList = module.exports.concatList = function concatList(a, b, reverse) {
+const _ = require('lodash');
+
+const joinDuplicates = module.exports.concatList = function concatList(group, reverse) {
     //eliminate dups from the exchanges and combine them.
-    const mappedObject = a.concat(b).reduce((map, line) => {
+    const mappedObject = group.reduce((map, line) => {
         if (map[line.rate]) {
             line.overlaps = true;
-            const quantity = map[line.rate].quantity + line.quantity;
+            const { exchange, rate, quantity } = map[line.rate];
+            exchange.push(...line.exchange);
             map[line.rate] = {
-                rate: line.rate,
-                quantity,
-                exchange: [...map[line.rate].exchange, ...line.exchange]
+                rate,
+                quantity: quantity + line.quantity,
+                exchange: _.uniq(exchange)
             };
         } else {
             map[line.rate] = line;
@@ -21,10 +24,13 @@ const concatList = module.exports.concatList = function concatList(a, b, reverse
 
 
 module.exports.concatExchanges = function concatExchanges(lists) {
-    const a = lists[0];
-    const b = lists[1];
-    const asks = concatList(a.asks, b.asks);
-    const bids = concatList(a.bids, b.bids, true);
+    const joined = lists.reduce((map, list) => {
+      map.asks = map.asks.concat(list.asks);
+      map.bids = map.bids.concat(list.bids);
+      return map;
+    }, { asks: [], bids: [] });
+    const asks = joinDuplicates(joined.asks);
+    const bids = joinDuplicates(joined.bids, true);
     return {
         asks,
         bids

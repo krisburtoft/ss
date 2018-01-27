@@ -55,11 +55,11 @@ module.exports = class BittrexManager extends EventsEmitter {
                     orderBook
                 };
 
-                this.markets[market] = currentPair;
             }
             const { orderBook } = currentPair;
             orderBook.start();
             currentPair.count++;
+            this.markets[market] = currentPair;
         } catch (err) {
             logger.error(err);
             return await Promise.delay(250).then(() => this.subscribeToPair(market, count));

@@ -1,5 +1,6 @@
 const bittrex = require('./bittrex');
 const poloniex = require('./poloniex');
+const cryptopia = require('./cryptopia');
 const logger = require('../util/logger')('subScribeToMarkets');
 const Rx = require('rxjs');
 const { ORDERBOOKS } = require.main.require('./shared/actions.json');
@@ -9,27 +10,32 @@ const { concatExchanges } = require('../util/concatExchanges');
 module.exports = async function subscribeToMarkets(market, cb) {
     try {
         logger.debug('subscribing to exchanges.');
-        const bittrexEvents = await bittrex(market);
-        const poloniexEvents = await poloniex(market);
-        const cancelPoloniex = Rx.Observable.fromEvent(poloniexEvents, 'closed');
-        const cancelBittrex = Rx.Observable.fromEvent(bittrexEvents, 'closed');
-        const cancelEvents = Rx.Observable.merge(cancelPoloniex, cancelBittrex);
-
-        const poloniexObservable =  Rx.Observable.fromEvent(poloniexEvents, market);
-        const bittrexObsersevable = Rx.Observable.fromEvent(bittrexEvents, market).startWith({ asks: [], bids: []});
-        const combinedMarketFeed = Rx.Observable.combineLatest(poloniexObservable, bittrexObsersevable).map(concatExchanges);
-        logger.debug('combine success!');
-        const subscription = combinedMarketFeed.takeUntil(cancelEvents).throttle(val => Rx.Observable.interval(2000)).subscribe(feed => {
-            cb({ type: ORDERBOOKS, payload: feed });
+        const markets = [bittrex, poloniex, cryptopia];
+        const cancelEvents = [];
+        const observables = [];
+        const events = await Promise.map(markets, async function(m) {
+          return await m(market);
         });
+
+        events.forEach(event => {
+          cancelEvents.push(Rx.Observable.fromEvent(event, 'closed'));
+          observables.push(Rx.Observable.fromEvent(event, market).startWith({ asks: [], bids: []}))
+        });
+        const cancel = Rx.Observable.merge(...cancelEvents);
+        const combinedMarketFeed = Rx.Observable.combineLatest(...observables).map(concatExchanges);
+
+        logger.debug('combine success!');
+        const subscription = combinedMarketFeed
+          .takeUntil(cancel)
+          .throttle(val => Rx.Observable.interval(2000))
+          .subscribe(feed => {
+            cb({ type: ORDERBOOKS, payload: feed });
+          });
         logger.debug('subscription created');
         return {
             unsubscribe: async () => {
-                return await Promise.try(() => {
-                    poloniexEvents.emit('unsubscribe');
-                    bittrexEvents.emit('unsubscribe');
-                })
-                    .then(() => subscription.unsubscribe());
+                return await Promise.all(events.map(event => event.emit('unsubscribe')))
+                  .then(() => subscription.unsubscribe());
             }
         };
     } catch (err) {

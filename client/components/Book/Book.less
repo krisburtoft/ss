@@ -22,17 +22,17 @@
         line-height: @rowHeight;
         display: flex;
         color: darken(@secondary, 15%);
-        
+
         &-rate{
-            flex: 0 1 30%;
+            flex: 0 1 20%;
         }
         &-quantity{
             flex: 0 1 30%;
         }
         &-exchanges {
-            flex: 1 0 20%;
+            flex: 1 0 30%;
             text-transform: capitalize;
-            
+
         }
         &:hover {
             background-color: fadeout(@primary, 89%);
@@ -41,7 +41,7 @@
             background-color: fadeout(@secondary,90%);
             &:hover {
                 background-color: fadeout(@secondary, 80%);
-            } 
+            }
         }
         &.book__row--overlapping {
             background-color: fadeout(@tertiary, 90%);
@@ -69,7 +69,7 @@
                 transform: rotate(-45deg);
                 top: 4px;
             }
-            
+
         }
     }
     .book__rows {
@@ -107,7 +107,7 @@
                 text-align: center;
                 line-height: 30px;
             }
-            
+
             &.disabled {
                 border-color: @disabled;
                 color: @disabled;
@@ -150,6 +150,6 @@
         .btn-prev-more {
             display: none;
         }
-        
+
     }
 }
