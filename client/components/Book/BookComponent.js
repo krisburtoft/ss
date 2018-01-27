@@ -17,7 +17,7 @@ class BookComponent extends Component {
         const { rows, pageIndex, totalPages, title } = this.props;
         return (
             <div className='book__wrapper'>
-                <h2 className='book__title'>{title}</h2>
+                <h2 className='book__title'>{rows.length ? title : `Loading ${title}...`}</h2>
                 <div className='book__header book__row'>
                     <div className='book__row-rate'>
                         Rate
@@ -33,10 +33,10 @@ class BookComponent extends Component {
                 </div>
                 <div className='book__rows'>
                     {rows.map((row, index) => (
-                            <div 
+                            <div
                                 className={`book__row book__row--${
                                     index % 2 === 0 ? 'even' : 'odd'
-                                    } ${row.exchange.length > 1 ? 'book__row--overlapping' : ''}`} 
+                                    } ${row.exchange.length > 1 ? 'book__row--overlapping' : ''}`}
                                 key={row.rate}>
                                 <div className='book__row-rate'>
                                     {row.rate}

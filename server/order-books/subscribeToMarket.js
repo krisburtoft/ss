@@ -1,21 +1,21 @@
-const bittrex = require('./bittrex');
-const poloniex = require('./poloniex');
-const cryptopia = require('./cryptopia');
 const logger = require('../util/logger')('subScribeToMarkets');
-const Rx = require('rxjs');
-const { ORDERBOOKS } = require.main.require('./shared/actions.json');
 const Promise = require('bluebird');
-const { concatExchanges } = require('../util/concatExchanges');
+const Rx = require('rxjs');
 
-module.exports = async function subscribeToMarkets(market, cb) {
+const { ORDERBOOKS } = require.main.require('./shared/actions.json');
+const { concatExchanges } = require('../util/concatExchanges');
+const fs = require('fs');
+const path = require('path');
+
+const exchangeEmitters = fs.readdirSync(path.resolve(__dirname, './exchange-emitters'))
+  .map(file => require("./exchange-emitters/" + file));
+
+module.exports = async function subscribeToMarket(market, cb) {
     try {
         logger.debug('subscribing to exchanges.');
-        const markets = [bittrex, poloniex, cryptopia];
         const cancelEvents = [];
         const observables = [];
-        const events = await Promise.map(markets, async function(m) {
-          return await m(market);
-        });
+        const events = await Promise.map(exchangeEmitters, m => m(market));
 
         events.forEach(event => {
           cancelEvents.push(Rx.Observable.fromEvent(event, 'closed'));
@@ -27,11 +27,12 @@ module.exports = async function subscribeToMarkets(market, cb) {
         logger.debug('combine success!');
         const subscription = combinedMarketFeed
           .takeUntil(cancel)
-          .throttle(val => Rx.Observable.interval(2000))
+          .throttle(val => Rx.Observable.interval(1000))
           .subscribe(feed => {
             cb({ type: ORDERBOOKS, payload: feed });
           });
         logger.debug('subscription created');
+
         return {
             unsubscribe: async () => {
                 return await Promise.all(events.map(event => event.emit('unsubscribe')))

@@ -3,16 +3,19 @@
     display:flex;
     flex-direction: column;
     .core-layout__header {
-        @headerHeight: 48px;
+        @headerHeight: 60px;
         background-color: @primary;
         height: @headerHeight;
         flex: 0 0 @headerHeight;
         .core-layout__header-home-link {
             color: contrast(@primary);
             text-decoration: none;
-            font-size: 18px;
+            font-size: 24px;
             line-height: @headerHeight;
             margin-left: 48px;
+            &:hover {
+              color: lighten(@primary, 50%);
+            }
         }
     }
 
@@ -20,7 +23,6 @@
         flex-grow: 1;
         padding: 16px 32px;
     }
-    
+
     flex: 1;
 }
-

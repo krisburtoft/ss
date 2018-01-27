@@ -1,17 +1,23 @@
 const actions = require('../../shared/actions.json');
-const subscribeToMarkets = require('./subscribeToMarkets');
+const logger = require('../util/logger')('order-books-websocket-server');
+
+const subscribeToMarket = require('./subscribeToMarket');
 const { loadAvailableMarkets, loadMarketInfo } = require('./markets');
 
 const ACTION_HANDLERS = {
     [actions.JOIN]: async function(action, client) {
+        logger.debug('subscribing to market', action);
+
         const previousSubscription = client.subscriptions[action.data];
         if (previousSubscription) {
             return;
         }
-        const subscription = await subscribeToMarkets(action.data, event => client.emit('action', event));
+        const subscription = await subscribeToMarket(action.data, event => client.emit('action', event));
         client.subscriptions[action.data] = subscription;
     },
     [actions.UNSUBSCRIBE]: (action, client) => {
+        logger.debug('unsubscribing from market', action);
+
         const subscription = client.subscriptions[action.data];
         if (!subscription) {
             return;
@@ -20,13 +26,17 @@ const ACTION_HANDLERS = {
         delete client.subscriptions[action.data];
     },
     [actions.LOAD_MARKETS]: async function(action, client) {
+        logger.debug('fetching available markets', action);
+
         const markets = await loadAvailableMarkets();
-        client.emit('action', { 
-            type: actions.RECEIVE_MARKETS, 
+        client.emit('action', {
+            type: actions.RECEIVE_MARKETS,
             payload: markets
         });
     },
     [actions.GET_MARKET_INFO]: async function(action, client) {
+        logger.debug('fetching market info', action);
+
         const market  = await loadMarketInfo(action.data);
         client.emit('action', {
             type: actions.RECEIVE_MARKET_INFO,
@@ -35,7 +45,7 @@ const ACTION_HANDLERS = {
     }
 };
 
-module.exports = function setUpSocket(io) {
+module.exports = function setUpWebSocketServer(io) {
     io.on('connection', function(client) {
         client.subscriptions = {};
         client.on('action', function(action) {
@@ -44,10 +54,9 @@ module.exports = function setUpSocket(io) {
                 handler(action, client);
             }
         });
-
         client.on('disconnect', () => {
             Object.values(client.subscriptions).forEach(sub => sub.unsubscribe());
         });
-        
+
     });
 };

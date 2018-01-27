@@ -76,4 +76,4 @@ module.exports = class BittrexManager extends EventsEmitter {
             delete this.manager.orderBooks[market];
         }
     }
-};
+}
