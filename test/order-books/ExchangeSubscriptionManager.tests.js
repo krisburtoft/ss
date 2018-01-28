@@ -77,20 +77,17 @@ describe('ExchangeSubscriptionManager', () => {
 
     describe('unsubscribe', () => {
         let manager;
-        let exchangeImplementation;
-        let getManager;
-        let mockBooks;
         let mockCallback;
         let unsubscribe;
         beforeEach(() => {
             manager = new ExchangeSubscriptionManager({
                 throttleTime: 0
             });
-            mockBooks = {
+            const mockBooks = {
                 asks: [],
                 bids: []
             };
-            exchangeImplementation = {
+            const exchangeImplementation = {
                 name: 'mockexchange',
                 subscribe: (pair, cb) => {
                     cb(mockBooks);
@@ -99,7 +96,7 @@ describe('ExchangeSubscriptionManager', () => {
                 },
                 unsubscribe: () => {}
             };
-            getManager = () => exchangeImplementation;
+            const getManager = () => exchangeImplementation;
             mockCallback = sinon.spy();
             manager.registerExchangeManager(getManager);
             unsubscribe = manager.subscribeToCurrencyPair('ETC', mockCallback);
@@ -107,7 +104,7 @@ describe('ExchangeSubscriptionManager', () => {
 
         it('sanity check', done => {
             setTimeout(() => {
-                manager.unsubscribe();
+                unsubscribe();
                 expect(mockCallback.callCount).to.equal(3);
                 done();
             }, 400);
