@@ -5,7 +5,7 @@ const axios = require('axios');
 
 module.exports = class CryptopiaManager extends EventsEmitter {
     constructor({
-      intervalInMilliseconds = 5000
+        intervalInMilliseconds = 5000
     } = {}) {
         super();
         logger.info('initializing cryptopia exchange manager');
@@ -18,32 +18,32 @@ module.exports = class CryptopiaManager extends EventsEmitter {
     }
 
     static parseMarket(market) {
-      return market.split('-').reverse().join('_');
+        return market.split('-').reverse().join('_');
     }
 
     async subscribeToPair(market, count = 0) {
-      const pair = CryptopiaManager.parseMarket(market);
+        const pair = CryptopiaManager.parseMarket(market);
         try {
             let currentPair = this.markets[market];
             if (!currentPair) {
                 const orderBookId = setInterval(() => {
-                  axios.get(`https://www.cryptopia.co.nz/api/GetMarketOrders/${pair}`).then(({data}) => {
-                      logger.trace('orderbook', data);
-                      if (data.Success) {
-                        const { Buy, Sell } = data.Data;
-                        const volumes = {
-                            asks: CryptopiaManager.normalizeGroup(Sell),
-                            bids: CryptopiaManager.normalizeGroup(Buy)
-                        };
-                        this.emit(market, volumes);
-                      } else {
-                        logger.error('data');
-                        this.emit('error', data);
-                      }
-                  }).catch(e => {
-                    logger.error(e);
-                    this.emit('error', e);
-                  });
+                    axios.get(`https://www.cryptopia.co.nz/api/GetMarketOrders/${pair}`).then(({data}) => {
+                        logger.trace('orderbook', data);
+                        if (data.Success) {
+                            const { Buy, Sell } = data.Data;
+                            const volumes = {
+                                asks: CryptopiaManager.normalizeGroup(Sell),
+                                bids: CryptopiaManager.normalizeGroup(Buy)
+                            };
+                            this.emit(market, volumes);
+                        } else {
+                            logger.error('data');
+                            this.emit('error', data);
+                        }
+                    }).catch(e => {
+                        logger.error(e);
+                        this.emit('error', e);
+                    });
                 }, this.intervalInMilliseconds);
 
                 currentPair = {

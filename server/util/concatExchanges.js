@@ -25,9 +25,9 @@ const joinDuplicates = module.exports.concatList = function concatList(group, re
 
 module.exports.concatExchanges = function concatExchanges(lists) {
     const joined = lists.reduce((map, list) => {
-      map.asks = map.asks.concat(list.asks);
-      map.bids = map.bids.concat(list.bids);
-      return map;
+        map.asks = map.asks.concat(list.asks);
+        map.bids = map.bids.concat(list.bids);
+        return map;
     }, { asks: [], bids: [] });
     const asks = joinDuplicates(joined.asks);
     const bids = joinDuplicates(joined.bids, true);

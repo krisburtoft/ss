@@ -1,8 +1,16 @@
 const actions = require('../../shared/actions.json');
 const logger = require('../util/logger')('order-books-websocket-server');
-
-const subscribeToMarket = require('./subscribeToMarket');
 const { loadAvailableMarkets, loadMarketInfo } = require('./markets');
+const fs = require('fs');
+const path = require('path');
+const exchangeManagers = fs.readdirSync(path.resolve(__dirname, './exchanges'))
+    .map(file => require('./exchanges/' + file));
+const ExchangeSubscriptionManager = require('./ExchangeSubscriptionManager');
+const manager = new ExchangeSubscriptionManager();
+
+logger.info('registering exchange managers');
+exchangeManagers.forEach(m => manager.registerExchangeManager(m));
+logger.info('registration complete');
 
 const ACTION_HANDLERS = {
     [actions.JOIN]: async function(action, client) {
@@ -12,17 +20,17 @@ const ACTION_HANDLERS = {
         if (previousSubscription) {
             return;
         }
-        const subscription = await subscribeToMarket(action.data, event => client.emit('action', event));
+        const subscription = await manager.subscribeToCurrencyPair(action.data, orderBook => client.emit('action', { type: actions.ORDERBOOKS, payload: orderBook }));
         client.subscriptions[action.data] = subscription;
     },
     [actions.UNSUBSCRIBE]: (action, client) => {
         logger.debug('unsubscribing from market', action);
 
-        const subscription = client.subscriptions[action.data];
-        if (!subscription) {
+        const unsubscribe = client.subscriptions[action.data];
+        if (!unsubscribe) {
             return;
         }
-        subscription.unsubscribe();
+        unsubscribe();
         delete client.subscriptions[action.data];
     },
     [actions.LOAD_MARKETS]: async function(action, client) {
@@ -55,7 +63,7 @@ module.exports = function setUpWebSocketServer(io) {
             }
         });
         client.on('disconnect', () => {
-            Object.values(client.subscriptions).forEach(sub => sub.unsubscribe());
+            Object.values(client.subscriptions).forEach(unsubscribe => unsubscribe());
         });
 
     });

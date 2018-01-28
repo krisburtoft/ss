@@ -12,9 +12,9 @@ exports.loadAvailableMarkets = async function loadAvailableMarkets() {
         axios.get(CRYPTOPIO_MARKETS_URL)])
         .spread((bittrex, poloniex, cryptopia) => {
             const cryptopiaMap = cryptopia.data.Data.reduce((map, currency) => {
-              map[`${currency.BaseSymbol}-${currency.Symbol}`] = currency.Status === 'OK';
-              return map;
-            }, {})
+                map[`${currency.BaseSymbol}-${currency.Symbol}`] = currency.Status === 'OK';
+                return map;
+            }, {});
             return bittrex.data.result.filter(i =>
                 i.IsActive && poloniex.data[i.MarketName.replace(/-/, '_')] && cryptopiaMap[i.MarketName])
                 .map(i => ({

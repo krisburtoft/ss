@@ -1,4 +1,4 @@
-const getLogger = require('../util/logger');
+const getLogger = require.main.require('./server/util/logger');
 const EventsEmitter = require('events');
 const Promise = require('bluebird');
 
@@ -9,10 +9,10 @@ module.exports = function buildExchangeEmitter(name, getManager) {
             logger.trace('registering');
             const manager = await getManager();
             const emitter = new EventsEmitter();
-            logger.debug('subscribe|', marketName);
+            logger.debug('subscribing to ', marketName);
             await manager.subscribeToPair(marketName);
             manager.on(marketName, (event) => {
-                logger.trace('event|', event);
+                logger.trace('orderBook', event);
                 emitter.emit(marketName, event);
             });
             emitter.on('unsubscribe', () => {
