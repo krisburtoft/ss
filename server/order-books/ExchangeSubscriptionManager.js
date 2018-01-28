@@ -1,12 +1,13 @@
 const EventsEmitter = require('events');
-const logger = require.main.require('./server/util/logger')('exchange-subscription-manager');
 const { concatExchanges } = require('../util/concatExchanges');
+const logger = require('../util/logger.js')('exchange-subscription-manager');
 const Rx = require('rxjs');
 const { v1 } = require('uuid');
 
 module.exports = class ExchangeSubscriptionManager extends EventsEmitter {
-    constructor() {
+    constructor({ throttleTime = 1000 } = {}) {
         super();
+        this.throttleTime = throttleTime;
         this.registeredExchanges = [];
         this.registeredPairs = {};
     }
@@ -26,13 +27,14 @@ module.exports = class ExchangeSubscriptionManager extends EventsEmitter {
             this.registeredExchanges.forEach(exchange => {
                 const exchangeEvent = `${exchange.name}:${pair}`;
                 logger.debug('setting up response event name', exchangeEvent);
-                exchange.subscribe(pair, this.emit.bind(this, exchangeEvent));
+                const func = this.emit.bind(this, exchangeEvent);
+                exchange.subscribe(pair, (func));
                 orderBookEmitEventNames.push(exchangeEvent);
             });
             const observables = orderBookEmitEventNames.map(eventName => Rx.Observable.fromEvent(this, eventName).startWith({ asks: [], bids: []}));
             const combinedExchangeFeed = Rx.Observable.combineLatest(...observables)
                 .map(concatExchanges)
-                .throttle(val => Rx.Observable.interval(1000));
+                .throttle(val => Rx.Observable.interval(this.throttleTime));
             this.registeredPairs[pair] = currentPairRegistration = {
                 combinedExchangeFeed,
                 subscriptions: {}
@@ -47,6 +49,7 @@ module.exports = class ExchangeSubscriptionManager extends EventsEmitter {
     }
 
     unsubscribe(id, pair) {
+        console.log('id', id, pair);
         const currentPairRegistration = this.registeredPairs[pair];
         if (currentPairRegistration && currentPairRegistration.subscriptions[id]) {
             currentPairRegistration.subscriptions[id].unsubscribe();

@@ -14,10 +14,10 @@ class BookComponent extends Component {
     }
 
     render() {
-        const { rows, pageIndex, totalPages, title } = this.props;
+        const { rows, pageIndex, totalPages, title, loading} = this.props;
         return (
             <div className='book__wrapper'>
-                <h2 className='book__title'>{rows.length ? title : `Loading ${title}...`}</h2>
+                <h2 className='book__title'>{loading ? `Loading ${title}...` : title}</h2>
                 <div className='book__header book__row'>
                     <div className='book__row-rate'>
                         Rate
@@ -75,7 +75,8 @@ BookComponent.propTypes = {
     changePage: PropTypes.func.isRequired,
     pageIndex: PropTypes.number.isRequired,
     listType: PropTypes.string.isRequired,
-    totalPages: PropTypes.number.isRequired
+    totalPages: PropTypes.number.isRequired,
+    loading: PropTypes.bool.isRequired
 };
 
 export default BookComponent;

@@ -22,7 +22,8 @@ export default class OrderBooksRoute extends Component {
             bids,
             bidsPageIndex,
             bidsTotalPages,
-            marketSummary
+            marketSummary,
+            loading
         } = this.props;
         return (
             <div className='home-route'>
@@ -36,6 +37,7 @@ export default class OrderBooksRoute extends Component {
                         pageIndex={asksPageIndex}
                         rows={asks}
                         title='Asks'
+                        loading={loading}
                         totalPages={asksTotalPages}
                         listType='asks' />
                 </div>
@@ -45,6 +47,7 @@ export default class OrderBooksRoute extends Component {
                         pageIndex={bidsPageIndex}
                         rows={bids}
                         title='Bids'
+                        loading={loading}
                         totalPages={bidsTotalPages}
                         listType='bids' />
                 </div>

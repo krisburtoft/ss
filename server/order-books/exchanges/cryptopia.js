@@ -16,11 +16,10 @@ module.exports = function getCryptopiaManager() {
         name: 'cryptopia',
         subscribe: async function subscribeToPair(pair, callback) {
             logger.debug('subscribing to pair', pair);
-            
+
             const orderBookId = setInterval(() => {
                 axios.get(`https://www.cryptopia.co.nz/api/GetMarketOrders/${parsePair(pair)}`).then(({ data }) => {
-                    logger.debug('orderbook data retrieved');
-                    logger.trace('orderbook', data);
+                    logger.trace('orderbook data retrieved');
                     if (data.Success) {
                         const { Buy, Sell } = data.Data;
                         const volumes = {

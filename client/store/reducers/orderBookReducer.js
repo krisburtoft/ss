@@ -25,11 +25,11 @@ export const loadMarket = (data) => {
     return (dispatch, getState) => {
         dispatch({
             type: actions.JOIN,
-            data  
+            data
         });
         dispatch({
             type: actions.GET_MARKET_INFO,
-            data  
+            data
         });
 
     }
@@ -71,7 +71,7 @@ const ACTION_HANDLERS = {
             .set(`${list}TotalPages`, totalPages)
     },
     [actions.UNSUBSCRIBE]: (state, action) => initialState,
-    [actions.RECEIVE_MARKET_INFO]: (state, action) => state.set('marketSummary', action.payload)
+    [actions.RECEIVE_MARKET_INFO]: (state, action) => state.set('marketSummary', action.payload).set('loading', false)
 };
 
 // ------------------------------------
@@ -86,7 +86,8 @@ const initialState = Immutable.from({
     bidsPageIndex: 0,
     asksTotalPages: 0,
     bidsTotalPages: 0,
-    marketSummary: {}
+    marketSummary: {},
+    loading: true
 });
 
 export default function orderBooksReducer(state = initialState, action) {
@@ -94,4 +95,3 @@ export default function orderBooksReducer(state = initialState, action) {
 
     return handler ? handler(state, action) : state;
 }
-

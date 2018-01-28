@@ -5,7 +5,7 @@ function parseGroup(group) {
     return Object.keys(group).map(rate => ({ exchange: ['poloniex'], rate , quantity: parseFloat(group[rate]) }));
 }
 
-function normalizePair(pair) {
+function parsePair(pair) {
     return pair.replace(/-/, '_');
 }
 
@@ -20,7 +20,6 @@ module.exports = function getPoloniexManager() {
         logger.info('Poloniex connection ready');
     });
     manager.on('message', (pair, dataSet, seq) => {
-        logger.debug('message received');
         if (!pairs[pair]) {
             return;
         }
@@ -71,18 +70,18 @@ module.exports = function getPoloniexManager() {
                 logger.debug('waiting until manager is ready');
                 return Promise.delay(250).then(() => poloniexmanager.subscribe(pair, callback));
             }
-            const normalizedPair = normalizePair(pair);
-            logger.debug('normalized pair being sent to subscribe', normalizePair);
-            manager.subscribe(normalizedPair);
-            pairs[normalizedPair] = {
+            const parsedPair = parsePair(pair);
+            logger.debug('normalized pair being sent to subscribe', parsePair);
+            manager.subscribe(parsedPair);
+            pairs[parsedPair] = {
                 emit: callback
             };
         },
         unsubscribe: function unsubscribe(pair) {
-            const normalizedPair = normalizePair(pair);
-            logger.debug('unsubscribing from pair', normalizedPair);
-            manager.unsubscribe(normalizedPair);
-            logger.debug('unsubscribed from pair', normalizedPair);
+            const parsedPair = parsePair(pair);
+            logger.debug('unsubscribing from pair', parsedPair);
+            manager.unsubscribe(parsedPair);
+            logger.debug('unsubscribed from pair', parsedPair);
         }
     };
     return poloniexmanager;

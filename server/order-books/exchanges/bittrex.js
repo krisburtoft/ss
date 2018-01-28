@@ -27,7 +27,7 @@ module.exports = function getBittrexManager() {
 
                 const orderBook = manager.orderBook(pair);
                 orderBook.on('update', () => {
-                    logger.debug('orderbook update');
+                    logger.trace('orderbook update');
                     const { asks, bids } = orderBook.orders;
                     const volumes = {
                         asks: parseGroup(asks),
