@@ -7,8 +7,8 @@
     "node": "9.4.0"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha test/**/*.js --require ./test/testSetup",
-    "test:watch": "./node_modules/mocha/bin/mocha test/**/*.js  --require ./test/testSetup --watch",
+    "test": "node ./node_modules/mocha/bin/mocha test/**/*.js --require ./test/testSetup",
+    "test:watch": "node ./node_modules/mocha/bin/mocha test/**/*.js  --require ./test/testSetup --watch",
     "start": "node index",
     "build": "rimraf dist && cross-env NODE_ENV=production ./node_modules/.bin/webpack --config ./webpack.production.config.js --progress --profile --colors",
     "lint": "eslint .",
