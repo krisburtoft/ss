@@ -5,6 +5,15 @@
     flex-direction: column;
     .book__title {
         color: darken(@tertiary, 15%);
+        .loading-indicator {
+            height: 20px;
+            display: inline;
+            transition: opacity 250ms;
+            transition-delay: 1s;
+            &.book__title-loading-indicator--hidden {
+                opacity: 0;
+            }
+        }
     }
     .book__header.book__row {
         height: @rowHeight;

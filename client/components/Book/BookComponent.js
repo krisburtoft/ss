@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Pager from 'react-pager';
+import LoadingIndicator from 'components/LoadingIndicator';
+
 import './Book.less';
 
 class BookComponent extends Component {
@@ -17,7 +19,12 @@ class BookComponent extends Component {
         const { rows, pageIndex, totalPages, title, loading} = this.props;
         return (
             <div className='book__wrapper'>
-                <h2 className='book__title'>{loading ? `Loading ${title}...` : title}</h2>
+                <h2 className='book__title'>
+                    {title}
+                    {
+                        <LoadingIndicator className={`book__title-loading-indicator--${loading ? 'visible' : 'hidden'}`}/> 
+                    }
+                </h2>
                 <div className='book__header book__row'>
                     <div className='book__row-rate'>
                         Rate

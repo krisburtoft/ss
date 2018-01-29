@@ -3,6 +3,7 @@ const logger = require('../util/logger')('markets');
 const BITTREX_MARKETS_URL = 'https://bittrex.com/api/v1.1/public/getmarkets';
 const POLONIEX_MARKETS_URL = 'https://poloniex.com/public?command=returnTicker';
 const CRYPTOPIO_MARKETS_URL = 'https://www.cryptopia.co.nz/api/GetTradePairs';
+
 const Promise = require('bluebird');
 
 exports.loadAvailableMarkets = async function loadAvailableMarkets() {
@@ -15,6 +16,7 @@ exports.loadAvailableMarkets = async function loadAvailableMarkets() {
                 map[`${currency.BaseSymbol}-${currency.Symbol}`] = currency.Status === 'OK';
                 return map;
             }, {});
+            
             return bittrex.data.result.filter(i =>
                 i.IsActive && poloniex.data[i.MarketName.replace(/-/, '_')] && cryptopiaMap[i.MarketName])
                 .map(i => ({
