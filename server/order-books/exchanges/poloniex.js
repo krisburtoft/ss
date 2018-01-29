@@ -34,6 +34,9 @@ module.exports = function getPoloniexManager() {
             switch (message.data.type) {
             case 'bid':
             case 'ask':
+                if (!pairs[pair].data) {
+                    return;
+                }
                 pairs[pair].data[`${message.data.type}s`][message.data.rate] = message.data.amount;
                 break;
             default:

@@ -39,7 +39,7 @@ module.exports = function getBittrexManager() {
                     if (err === 'No Hub') {
                         logger.error('signalR connection error', err);
                         logger.info('retrying');
-                        return Promise.delay(250).then(() => bittrexManager.subscribeToPair(pair, callback, count));
+                        return Promise.delay(250).then(() => bittrexManager.subscribe(pair, callback, count));
                     }
                     logger.error(err);
                 });

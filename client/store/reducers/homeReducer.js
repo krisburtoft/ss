@@ -13,7 +13,7 @@ export const getHomeState = state => _.get(state, name, initialState);
 // ------------------------------------
 export const loadMarkets = (data) => ({
     type: actions.LOAD_MARKETS,
-    data  
+    data
 });
 
 // ------------------------------------
@@ -21,7 +21,7 @@ export const loadMarkets = (data) => ({
 // ------------------------------------
 const ACTION_HANDLERS = {
     [actions.RECEIVE_MARKETS]: (state, action) =>  {
-        return state.set('markets', action.payload);
+        return state.set('markets', action.payload).set('loading', false);
     }
 };
 
@@ -30,7 +30,8 @@ const ACTION_HANDLERS = {
 // ------------------------------------
 
 const initialState = Immutable.from({
-    markets: []
+    markets: [],
+    loading: true
 });
 
 export default function homeReducer(state = initialState, action) {
@@ -38,4 +39,3 @@ export default function homeReducer(state = initialState, action) {
 
     return handler ? handler(state, action) : state;
 }
-

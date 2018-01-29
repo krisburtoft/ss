@@ -30,7 +30,7 @@ module.exports = function getCryptopiaManager() {
                     } else {
                         logger.error('data');
                     }
-                });
+                }).catch(e => logger.error(e));
             }, intervalInMilliseconds);
 
             pairs[pair] = orderBookId;

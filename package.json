@@ -47,6 +47,7 @@
     "seamless-immutable": "^7.1.2",
     "socket.io": "^2.0.4",
     "socket.io-redux": "^1.0.3",
+    "svg-inline-loader": "^0.8.0",
     "uuid": "^3.2.1"
   },
   "devDependencies": {

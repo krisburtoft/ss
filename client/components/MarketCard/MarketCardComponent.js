@@ -10,7 +10,7 @@ class MarketCardComponent extends Component {
         return (
             <Link to={`/${id}`} className='market-card'>
               <h2>{name}</h2>
-              { 
+              {
                   logoUrl &&
                   <img src={logoUrl} alt={name} className='market-card__logo'/>
               }
@@ -26,7 +26,7 @@ MarketCardComponent.propTypes = {
     logoUrl: PropTypes.string,
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
-    baseCurreency: PropTypes.string.isRequired
+    baseCurrency: PropTypes.string.isRequired
 };
 
 export default MarketCardComponent;
