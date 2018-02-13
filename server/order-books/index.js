@@ -28,13 +28,13 @@ const ACTION_HANDLERS = {
             } = client.pageInfo;
 
             client.emit('action', { type: actions.ORDERBOOKS, payload: {
-                    asks: asks.slice(asksPageIndex * PAGE_SIZE, (asksPageIndex  + 1) * PAGE_SIZE),
-                    bids: bids.slice(bidsPageIndex * PAGE_SIZE, (bidsPageIndex  + 1) * PAGE_SIZE),
-                    asksTotalPages: Math.ceil(asks.length / PAGE_SIZE),
-                    bidsTotalPages: Math.ceil(bids.length / PAGE_SIZE),
-                    asksPageIndex: asksPageIndex,
-                    bidsPageIndex: bidsPageIndex
-                } 
+                asks: asks.slice(asksPageIndex * PAGE_SIZE, (asksPageIndex  + 1) * PAGE_SIZE),
+                bids: bids.slice(bidsPageIndex * PAGE_SIZE, (bidsPageIndex  + 1) * PAGE_SIZE),
+                asksTotalPages: Math.ceil(asks.length / PAGE_SIZE),
+                bidsTotalPages: Math.ceil(bids.length / PAGE_SIZE),
+                asksPageIndex: asksPageIndex,
+                bidsPageIndex: bidsPageIndex
+            } 
             });
         });
         client.subscriptions[action.data] = subscription;
@@ -69,7 +69,7 @@ const ACTION_HANDLERS = {
     },
     [actions.CHANGE_PAGE]: async function(action, client) {
         const { list, pageIndex } = action.payload;
-        client.pageInfo[`${list}pageIndex`] = pageIndex;
+        client.pageInfo[`${list}PageIndex`] = pageIndex;
     }
 };
 
