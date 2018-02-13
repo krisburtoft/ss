@@ -7,5 +7,6 @@
     "LOAD_MARKETS": "@@io/load-markets",
     "RECEIVE_MARKETS": "@@io/receive-markets",
     "GET_MARKET_INFO": "@@io/get-market-info",
-    "RECEIVE_MARKET_INFO": "@@io/receive-market-info"
+    "RECEIVE_MARKET_INFO": "@@io/receive-market-info",
+    "CHANGE_PAGE": "@@io/change-page"
 }
