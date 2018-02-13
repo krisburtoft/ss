@@ -7,7 +7,7 @@ const exchangeManagers = fs.readdirSync(path.resolve(__dirname, './exchanges'))
     .map(file => require('./exchanges/' + file));
 const ExchangeSubscriptionManager = require('./ExchangeSubscriptionManager');
 const manager = new ExchangeSubscriptionManager();
-
+const PAGE_SIZE = 10;
 logger.info('registering exchange managers');
 exchangeManagers.forEach(m => manager.registerExchangeManager(m));
 logger.info('registration complete');
@@ -20,7 +20,23 @@ const ACTION_HANDLERS = {
         if (previousSubscription) {
             return;
         }
-        const subscription = await manager.subscribeToCurrencyPair(action.data, orderBook => client.emit('action', { type: actions.ORDERBOOKS, payload: orderBook }));
+        const subscription = await manager.subscribeToCurrencyPair(action.data, orderBook => {
+            const { asks, bids } = orderBook;
+            const {
+                asksPageIndex,
+                bidsPageIndex
+            } = client.pageInfo;
+
+            client.emit('action', { type: actions.ORDERBOOKS, payload: {
+                    asks: asks.slice(asksPageIndex * PAGE_SIZE, (asksPageIndex  + 1) * PAGE_SIZE),
+                    bids: bids.slice(bidsPageIndex * PAGE_SIZE, (bidsPageIndex  + 1) * PAGE_SIZE),
+                    asksTotalPages: Math.ceil(asks.length / PAGE_SIZE),
+                    bidsTotalPages: Math.ceil(bids.length / PAGE_SIZE),
+                    asksPageIndex: asksPageIndex,
+                    bidsPageIndex: bidsPageIndex
+                } 
+            });
+        });
         client.subscriptions[action.data] = subscription;
     },
     [actions.UNSUBSCRIBE]: (action, client) => {
@@ -50,12 +66,20 @@ const ACTION_HANDLERS = {
             type: actions.RECEIVE_MARKET_INFO,
             payload: market
         });
+    },
+    [actions.CHANGE_PAGE]: async function(action, client) {
+        const { list, pageIndex } = action.payload;
+        client.pageInfo[`${list}pageIndex`] = pageIndex;
     }
 };
 
 module.exports = function setUpWebSocketServer(io) {
     io.on('connection', function(client) {
         client.subscriptions = {};
+        client.pageInfo = {
+            asksPageIndex: 0,
+            bidsPageIndex: 0
+        };
         client.on('action', function(action) {
             const handler = ACTION_HANDLERS[action.type];
             if (handler) {
