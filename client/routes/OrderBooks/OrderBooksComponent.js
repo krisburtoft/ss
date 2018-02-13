@@ -29,7 +29,10 @@ export default class OrderBooksRoute extends Component {
             <div className='home-route'>
                 <div className='home-route__market-summary'>
                     <h1 className='home-route__market-summary-title'>{marketSummary.name}</h1>
-                    <MarketCard {...marketSummary} />
+                    { 
+                        !loading && 
+                        <MarketCard {...marketSummary} />
+                    }
                 </div>
                 <div className='home-route__book'>
                     <Book

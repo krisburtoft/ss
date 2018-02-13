@@ -35,7 +35,7 @@ class BookComponent extends Component {
                     <div className='book__row-exchanges'>
                         Exchanges
                     </div>
-                    <div classNam='book__row-multiple-exchanges'>
+                    <div className='book__row-multiple-exchanges'>
                     </div>
                 </div>
                 <div className='book__rows'>
@@ -77,7 +77,7 @@ class BookComponent extends Component {
 
 BookComponent.propTypes = {
     rows: PropTypes.arrayOf(PropTypes.shape({
-      exchange: PropTypes.string.isRequired
+      exchange: PropTypes.arrayOf(PropTypes.string).isRequired
     })).isRequired,
     changePage: PropTypes.func.isRequired,
     pageIndex: PropTypes.number.isRequired,
