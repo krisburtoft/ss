@@ -81,7 +81,11 @@ const initialState = Immutable.from({
     bidsPageIndex: 0,
     asksTotalPages: 0,
     bidsTotalPages: 0,
-    marketSummary: {},
+    marketSummary: {
+        id: '',
+        name: '',
+        baseCurrency: ''
+    },
     loading: true
 });
 
